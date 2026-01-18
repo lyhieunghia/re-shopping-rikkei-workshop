@@ -22,12 +22,6 @@ out/
 *.war
 *.ear
 
-# Gradle
-.gradle/
-gradle/
-gradlew
-gradlew.bat
-
 # Documentation
 *.md
 README.md
