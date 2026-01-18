@@ -1,0 +1,61 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings
+
+# Build outputs
+build/
+target/
+out/
+*.class
+*.jar
+*.war
+*.ear
+
+# Gradle
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+
+# Documentation
+*.md
+README.md
+LICENSE
+
+# CI/CD
+.github/
+ci-cd.yaml
+
+# Environment files (will be provided at runtime)
+.env*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Test files
+src/test/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
