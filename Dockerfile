@@ -1,22 +1,26 @@
-# Build stage
+# ========== BUILD STAGE ==========
 FROM gradle:8.5-jdk21-alpine AS build
 
 WORKDIR /app
 
-# Copy Gradle files
-COPY build.gradle settings.gradle ./
+# Copy gradle wrapper & config first (for cache)
+COPY gradlew .
 COPY gradle ./gradle
+COPY build.gradle settings.gradle ./
+
+RUN chmod +x gradlew
+RUN ./gradlew dependencies --no-daemon
 
 # Copy source code
 COPY src ./src
 
-# Build the application
-RUN gradle clean build -x test --no-daemon
+# Build
+RUN ./gradlew clean build -x test --no-daemon
 
-# Runtime stage
+
+# ========== RUNTIME STAGE ==========
 FROM eclipse-temurin:21-jre-alpine
 
-# Install wget for healthcheck
 RUN apk add --no-cache wget
 
 WORKDIR /app
@@ -25,15 +29,13 @@ WORKDIR /app
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
-# Copy JAR from build stage
+# Copy jar
 COPY --from=build /app/build/libs/*.jar app.jar
 
-# Expose port
 EXPOSE 8080
 
-# Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Support JAVA_OPTS
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
